@@ -67,6 +67,8 @@ public class RealmRecyclerView extends FrameLayout {
     private OnRefreshListener onRefreshListener;
     private OnLoadMoreListener onLoadMoreListener;
 
+    private SwipeRefreshLayout.OnRefreshListener recyclerViewRefreshListener;
+
     public RealmRecyclerView(Context context) {
         super(context);
         init(context, null);
@@ -107,9 +109,10 @@ public class RealmRecyclerView extends FrameLayout {
         recyclerView = (RecyclerView) findViewById(R.id.rrv_recycler_view);
         emptyContentContainer = (ViewStub) findViewById(R.id.rrv_empty_content_container);
 
-        swipeRefreshLayout.setEnabled(isRefreshable);
         if (isRefreshable) {
-            swipeRefreshLayout.setOnRefreshListener(recyclerViewRefreshListener);
+            enableRefresh();
+        } else {
+            disableRefresh();
         }
 
         if (emptyViewId != 0) {
@@ -186,6 +189,32 @@ public class RealmRecyclerView extends FrameLayout {
             new ItemTouchHelper(realmSimpleItemTouchHelperCallback)
                     .attachToRecyclerView(recyclerView);
         }
+    }
+
+    public void enableRefresh() {
+        isRefreshable = true;
+        swipeRefreshLayout.setEnabled(true);
+        recyclerViewRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                if (!isRefreshing) {
+                    if (onRefreshListener == null) {
+                        swipeRefreshLayout.setRefreshing(false);
+                    } else {
+                        onRefreshListener.onRefresh();
+                        isRefreshing = true;
+                    }
+                }
+            }
+        };
+        swipeRefreshLayout.setOnRefreshListener(recyclerViewRefreshListener);
+    }
+
+    public void disableRefresh() {
+        isRefreshable = false;
+        swipeRefreshLayout.setEnabled(false);
+        recyclerViewRefreshListener = null;
+        swipeRefreshLayout.setOnRefreshListener(null);
     }
 
     /**
@@ -412,14 +441,4 @@ public class RealmRecyclerView extends FrameLayout {
         this.bufferItems = bufferItems;
     }
 
-    private SwipeRefreshLayout.OnRefreshListener recyclerViewRefreshListener =
-            new SwipeRefreshLayout.OnRefreshListener() {
-                @Override
-                public void onRefresh() {
-                    if (!isRefreshing && onRefreshListener != null) {
-                        onRefreshListener.onRefresh();
-                    }
-                    isRefreshing = true;
-                }
-            };
 }

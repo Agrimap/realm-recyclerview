@@ -120,7 +120,8 @@ public abstract class RealmBasedRecyclerViewAdapter
                 animateResults,
                 false,
                 null,
-                animateExtraColumnName);
+                animateExtraColumnName,
+                null);
     }
 
     public RealmBasedRecyclerViewAdapter(
@@ -128,7 +129,7 @@ public abstract class RealmBasedRecyclerViewAdapter
             OrderedRealmCollection<T> realmResults,
             boolean automaticUpdate,
             boolean animateResults) {
-        this(context, realmResults, automaticUpdate, animateResults, false, null);
+        this(context, realmResults, automaticUpdate, animateResults, false);
     }
 
     public RealmBasedRecyclerViewAdapter(
@@ -144,7 +145,26 @@ public abstract class RealmBasedRecyclerViewAdapter
                 animateResults,
                 addSectionHeaders,
                 null,
+                null,
                 null);
+    }
+
+    public RealmBasedRecyclerViewAdapter(
+            Context context,
+            OrderedRealmCollection<T> realmResults,
+            boolean automaticUpdate,
+            boolean animateResults,
+            boolean addSectionHeaders,
+            Spannable spannable) {
+        this(
+                context,
+                realmResults,
+                automaticUpdate,
+                animateResults,
+                addSectionHeaders,
+                null,
+                null,
+                spannable);
     }
 
     public RealmBasedRecyclerViewAdapter(
@@ -161,6 +181,7 @@ public abstract class RealmBasedRecyclerViewAdapter
                 animateResults,
                 addSectionHeaders,
                 headerColumnName,
+                null,
                 null);
     }
 
@@ -171,7 +192,8 @@ public abstract class RealmBasedRecyclerViewAdapter
             boolean animateResults,
             boolean addSectionHeaders,
             String headerColumnName,
-            String animateExtraColumnName) {
+            String animateExtraColumnName,
+            Spannable spannableHeader) {
 
         if (context == null) {
             throw new IllegalArgumentException("Context cannot be null");
@@ -191,6 +213,8 @@ public abstract class RealmBasedRecyclerViewAdapter
         if (animateResults) {
             setupAnimateResults(realmResults, animateExtraColumnName);
         }
+
+        setHeader(spannableHeader);
 
         updateRealmResults(realmResults);
     }
@@ -813,11 +837,7 @@ public abstract class RealmBasedRecyclerViewAdapter
         throw new IllegalStateException("Unknown OrderedRealmCollection type: " + realmResults);
     }
 
-    public void hideHeader() {
-        header = null;
-    }
-
-    public void showHeader(Spannable header) {
+    public void setHeader(Spannable header) {
         this.header = header;
     }
 

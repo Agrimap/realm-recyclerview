@@ -387,7 +387,14 @@ public class RealmRecyclerView extends FrameLayout {
         if (emptyViewId == 0) {
             return;
         }
-        boolean noResults = adapter.getItemCount() == 0;
+
+        boolean noResults;
+        if (adapter instanceof RealmBasedRecyclerViewAdapter) {
+            noResults = ((RealmBasedRecyclerViewAdapter) adapter).hasNoResult();
+        } else {
+            noResults = adapter.getItemCount() == 0;
+        }
+
         emptyContentContainer.setVisibility(noResults ? View.VISIBLE : View.GONE);
     }
 

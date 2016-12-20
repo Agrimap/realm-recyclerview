@@ -521,7 +521,7 @@ public abstract class RealmBasedRecyclerViewAdapter
         return value;
     }
 
-    public String getHeaderAtPosition(int position) {
+    public Object getHeaderAtPosition(int position) {
         for (int i = rowWrappers.size() - 1; i >= 0; i--) {
             RowWrapper rowWrapper = rowWrappers.get(i);
             if (!rowWrapper.isRealm) {

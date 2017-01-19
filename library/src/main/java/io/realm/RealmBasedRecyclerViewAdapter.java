@@ -858,4 +858,8 @@ public abstract class RealmBasedRecyclerViewAdapter
         this.header = header;
     }
 
+    public boolean hasNoItems() {
+        int itemCount = getItemCount();
+        return itemCount == 0 || itemCount == 1 && getItemViewType(0) == LIST_HEADER_VIEW_TYPE;
+    }
 }

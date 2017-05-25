@@ -40,7 +40,7 @@ import difflib.DiffUtils;
 import difflib.Patch;
 import io.realm.internal.RealmObjectProxy;
 import io.realm.internal.Row;
-import io.realm.internal.TableOrView;
+import io.realm.internal.Table;
 
 /**
  * The base {@link RecyclerView.Adapter} that includes custom functionality to be used with the
@@ -220,10 +220,10 @@ public abstract class RealmBasedRecyclerViewAdapter
     }
 
     private void setupAnimateResults(OrderedRealmCollection<T> realmResults, String animateExtraColumnName) {
-        TableOrView table = getTableOrView(realmResults);
+        Table table = getTable(realmResults);
 
         animatePrimaryColumnIndex = table.getTable().getPrimaryKey();
-        if (animatePrimaryColumnIndex == TableOrView.NO_MATCH) {
+        if (animatePrimaryColumnIndex == Table.NO_MATCH) {
             throw new IllegalStateException("Animating the results requires a primaryKey.");
         }
 
@@ -234,7 +234,7 @@ public abstract class RealmBasedRecyclerViewAdapter
 
         if (animateExtraColumnName != null) {
             animateExtraColumnIndex = table.getTable().getColumnIndex(animateExtraColumnName);
-            if (animateExtraColumnIndex == TableOrView.NO_MATCH) {
+            if (animateExtraColumnIndex == Table.NO_MATCH) {
                 throw new IllegalStateException("Animating the results requires a valid animateColumnName.");
             }
 
@@ -631,7 +631,7 @@ public abstract class RealmBasedRecyclerViewAdapter
         int headerCount = 0;
         int wrapperCount = 0;
         int sectionFirstPosition = 0;
-        long headerIndex = headerColumnName == null ? NO_SECTION_HEADER_COLUMN : getTableOrView().getColumnIndex(headerColumnName);
+        long headerIndex = headerColumnName == null ? NO_SECTION_HEADER_COLUMN : getTable().getColumnIndex(headerColumnName);
 
         rowWrappers.clear();
 
@@ -830,15 +830,15 @@ public abstract class RealmBasedRecyclerViewAdapter
         realm.commitTransaction();
     }
 
-    private TableOrView getTableOrView() {
-        return getTableOrView(realmResults);
+    private Table getTable() {
+        return getTable(realmResults);
     }
 
-    private TableOrView getTableOrView(OrderedRealmCollection<T> results) {
+    private Table getTable(OrderedRealmCollection<T> results) {
         if (results instanceof RealmList) {
-            return ((RealmList)results).view.getTable();
+            return ((RealmList)results).view.getTargetTable();
         } else if (results instanceof RealmResults) {
-            return ((RealmResults)results).getTableOrView();
+            return ((RealmResults)results).getTable();
         }
 
         throw new IllegalStateException("Unknown OrderedRealmCollection type: " + realmResults);
